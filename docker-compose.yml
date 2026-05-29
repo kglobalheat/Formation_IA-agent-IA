@@ -1,0 +1,10 @@
+services:
+  agent-ia:
+    build: .
+    environment:
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY}  # À définir dans ton .env local
+    volumes:
+      - .:/app           # Monte le code source pour le "Hot Reload"
+      - ./data:/app/data  # Pour persister les fichiers sauvegardés
+    stdin_open: true     # Permet d'interagir avec le conteneur
+    tty: true
