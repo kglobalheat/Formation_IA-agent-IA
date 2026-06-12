@@ -1,0 +1,38 @@
+import os
+from mistralai import Mistral
+
+def testagent(texte: str) -> str:
+    """
+    Fait appel au modèle Mistral pour analyser si le texte
+    est poli/respectueux ou méchant/désagréable.
+    """
+    api_key = os.getenv('MISTRAL_API_KEY')
+    if not api_key:
+        return "Erreur : MISTRAL_API_KEY introuvable."
+
+    client = Mistral(api_key=api_key)
+    
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "Tu es un expert en analyse de sentiment. Ton but est d'analyser "
+                "le texte fourni par l'utilisateur. Détermine s'il est poli/respectueux, "
+                "neutre ou méchant/désagréable. Réponds de façon très concise (1 à 2 phrases)."
+            )
+        },
+        {
+            "role": "user",
+            "content": f"Analyse ce texte : {texte}"
+        }
+    ]
+    
+    try:
+        response = client.chat.complete(
+            model="mistral-tiny",
+            messages=messages,
+            temperature=0.3
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"Erreur lors de l'analyse avec Mistral : {str(e)}"
